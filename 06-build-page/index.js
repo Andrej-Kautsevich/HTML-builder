@@ -57,24 +57,29 @@ const bundleCSS = () => {
 }
 
 const copyAssets = (source, dest) => {
-  fsPromises.mkdir(
+  fsPromises.rm(
     dest,
-    { recursive: true }
+    { recursive: true, force: true }
   ).then(() => {
-    fsPromises.readdir(
-      source,
-      { withFileTypes: true }
-    ).then((files) => {
-      files.forEach((file) => {
-        const pathFile = path.join(source, file.name);
-        const pathFileCopy = path.join(dest, file.name);
+    fsPromises.mkdir(
+      dest,
+      { recursive: true }
+    ).then(() => {
+      fsPromises.readdir(
+        source,
+        { withFileTypes: true }
+      ).then((files) => {
+        files.forEach((file) => {
+          const pathFile = path.join(source, file.name);
+          const pathFileCopy = path.join(dest, file.name);
 
-        file.isDirectory()
-          ? copyAssets(pathFile, pathFileCopy)
-          : fsPromises.copyFile(
-            pathFile,
-            pathFileCopy
-          )
+          file.isDirectory()
+            ? copyAssets(pathFile, pathFileCopy)
+            : fsPromises.copyFile(
+              pathFile,
+              pathFileCopy
+            )
+        })
       })
     })
   })
